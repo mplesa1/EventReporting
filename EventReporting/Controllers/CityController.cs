@@ -27,12 +27,29 @@ namespace EventReporting.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] CreateCityDto dto)
+        public async Task<IActionResult> CreateAsync([FromBody] CreateCityDto request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState.GetErrorMessages());
 
-            await _cityService.CreateAsync(dto);
+            await _cityService.CreateAsync(request);
+            return ApiResponseOk();
+        }
+
+        [HttpPut("{cityId}")]
+        public async Task<IActionResult> UpdateCity(int cityId, [FromBody]CreateCityDto request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState.GetErrorMessages());
+
+            await _cityService.UpdateAsync(cityId, request);
+            return ApiResponseOk(null);
+        }
+
+        [HttpDelete("{cityId}")]
+        public async Task<IActionResult> DeleteCity(int cityId)
+        {
+            await _cityService.DeleteAsync(cityId);
             return ApiResponseOk();
         }
     }

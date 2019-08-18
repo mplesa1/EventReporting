@@ -15,5 +15,7 @@ namespace EventReporting.Shared.Contracts.DataAccess
         void UpdateAsync(City city);
 
         Task<City> FindByIdAsync(int id);
+
+        void DeleteAsync(City city);
     }
 }

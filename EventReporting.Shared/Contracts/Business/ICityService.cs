@@ -10,5 +10,9 @@ namespace EventReporting.Shared.Contracts.Business
         Task<ICollection<CityDto>> FindAllAsync();
 
         Task CreateAsync(CreateCityDto dto);
+
+        Task UpdateAsync(int cityId, CreateCityDto dto);
+
+        Task DeleteAsync(int cityId);
     }
 }

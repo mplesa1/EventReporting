@@ -32,5 +32,10 @@ namespace EventReporting.DataAccessLayer.Repositories
         {
             return await _context.Cities.FindAsync(id);
         }
+
+        public void DeleteAsync(City city)
+        {
+            _context.Cities.Remove(city);
+        }
     }
 }
