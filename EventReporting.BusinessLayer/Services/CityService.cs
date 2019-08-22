@@ -2,9 +2,8 @@
 using EventReporting.Model;
 using EventReporting.Shared.Contracts.Business;
 using EventReporting.Shared.Contracts.DataAccess;
-using EventReporting.Shared.DataTransferObjects;
+using EventReporting.Shared.DataTransferObjects.City;
 using EventReporting.Shared.Infrastructure.Exceptions;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

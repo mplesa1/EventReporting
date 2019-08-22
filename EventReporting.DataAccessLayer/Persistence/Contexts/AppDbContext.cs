@@ -37,6 +37,26 @@ namespace EventReporting.DataAccessLayer.Persistence.Contexts
             builder.Entity<Settlement>().Property(s => s.Name).IsRequired().HasMaxLength(50);
             builder.Entity<Settlement>().Property(s => s.PostalCode).IsRequired().HasMaxLength(50);
             builder.Entity<Settlement>().Property(s => s.TypeOfSettlement).IsRequired();
+
+            builder.Entity<Settlement>().HasData
+            (
+            new Settlement { Id = 100, Name = "Sloboština", PostalCode = "10010", TypeOfSettlement = ETypeOfSettlement.Neighborhood, CityId = 100 },
+            new Settlement { Id = 101, Name = "Maksimir", PostalCode = "10000", TypeOfSettlement = ETypeOfSettlement.Neighborhood, CityId = 100 },
+            new Settlement { Id = 102, Name = "Ciblja", PostalCode = "10050", TypeOfSettlement = ETypeOfSettlement.Neighborhood, CityId = 101 }
+            );
+
+
+            builder.Entity<Event>().ToTable("events");
+            builder.Entity<Event>().HasKey(e => e.Id);
+            builder.Entity<Event>().Property(e => e.Id).IsRequired().ValueGeneratedOnAdd();
+            builder.Entity<Event>().Property(e => e.Description).IsRequired().HasMaxLength(400);
+            builder.Entity<Event>().Property(e => e.Address).IsRequired().HasMaxLength(50);
+
+            builder.Entity<Event>().HasData
+            (
+            new Event { Id = 100, Description = "Poplava u slobi", Address = "V holjevca 22", SettlementId = 100 },
+            new Event { Id = 101, Description = "Sudar na kvatricu", Address = "Maksimirska 22", SettlementId = 101 }
+            );
         }
     }
 }

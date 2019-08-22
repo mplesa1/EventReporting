@@ -5,7 +5,7 @@ using System.Text;
 
 namespace EventReporting.Model
 {
-    public enum ETypeOfSettlement : short
+    public enum ETypeOfSettlement : byte
     {
         [Description("Village")]
         Village = 1,

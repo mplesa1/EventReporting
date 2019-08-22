@@ -1,5 +1,4 @@
-﻿using EventReporting.Model;
-using EventReporting.Shared.DataTransferObjects;
+﻿using EventReporting.Shared.DataTransferObjects.City;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

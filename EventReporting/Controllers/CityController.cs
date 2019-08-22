@@ -1,14 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using EventReporting.Api.Extensions;
-using EventReporting.Model;
+﻿using EventReporting.Api.Extensions;
 using EventReporting.Shared.Contracts.Business;
-using EventReporting.Shared.DataTransferObjects;
+using EventReporting.Shared.DataTransferObjects.City;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace EventReporting.Api.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
     public class CityController : BaseController
     {

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace EventReporting
 {
@@ -32,8 +33,11 @@ namespace EventReporting
                 options.UseInMemoryDatabase("event-reporting-in-memory");
             });
 
-            services.AddScoped<ICityRepository, CityRepository>();
             services.AddScoped<ICityService, CityService>();
+            services.AddScoped<ISettlementService, SettlementService>();
+
+            services.AddScoped<ICityRepository, CityRepository>();
+            services.AddScoped<ISettlementRepository, SettlementRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             #region Autommaper
@@ -45,6 +49,16 @@ namespace EventReporting
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
             #endregion
+
+            services.AddSwaggerGen(cfg =>
+            {
+                cfg.SwaggerDoc("v1", new Info
+                {
+                    Title = "EventReporting API",
+                    Version = "v1.1",
+                    Description = "Event Reporting API"
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,6 +75,14 @@ namespace EventReporting
             }
 
             app.UseHttpsRedirection();
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "EventReporting API");
+            });
+
             app.UseMvc();
         }
     }
