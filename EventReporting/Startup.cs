@@ -5,12 +5,14 @@ using EventReporting.DataAccessLayer.Persistence.Contexts;
 using EventReporting.DataAccessLayer.Repositories;
 using EventReporting.Shared.Contracts.Business;
 using EventReporting.Shared.Contracts.DataAccess;
+using EventReporting.Shared.Infrastructure.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace EventReporting
@@ -32,6 +34,9 @@ namespace EventReporting
             services.AddDbContext<AppDbContext>(options => {
                 options.UseInMemoryDatabase("event-reporting-in-memory");
             });
+
+
+            services.Configure<RabbitMqSettings>(Configuration.GetSection(nameof(RabbitMqSettings)));
 
             services.AddScoped<ICityService, CityService>();
             services.AddScoped<ISettlementService, SettlementService>();
@@ -58,7 +63,14 @@ namespace EventReporting
                     Version = "v1.1",
                     Description = "Event Reporting API"
                 });
+
             });
+
+            var serviceProvider = services.BuildServiceProvider();
+            var rabbitMQSettings = serviceProvider.GetRequiredService<IOptions<RabbitMqSettings>>().Value;
+            IOptions<RabbitMqSettings> rabbitMQSettingsOptions = Options.Create(rabbitMQSettings);
+            IRabbitMQService rabbitMQService = new RabbitMQService(rabbitMQSettingsOptions);
+            rabbitMQService.CreateQueues();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

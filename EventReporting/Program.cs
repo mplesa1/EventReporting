@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using EventReporting.BusinessLayer.Services;
 using EventReporting.DataAccessLayer.Persistence.Contexts;
+using EventReporting.Shared.Contracts.Business;
+using EventReporting.Shared.Infrastructure.Settings;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace EventReporting
 {
@@ -18,10 +22,12 @@ namespace EventReporting
         {
             var host = BuildWebHost(args);
 
-            using (var scope = host.Services.CreateScope())
-            using (var context = scope.ServiceProvider.GetService<AppDbContext>())
-            {
-                context.Database.EnsureCreated();
+            using (var scope = host.Services.CreateScope()) { 
+
+                using (var context = scope.ServiceProvider.GetService<AppDbContext>())
+                {
+                    context.Database.EnsureCreated();
+                }
             }
 
             host.Run();
