@@ -2,6 +2,7 @@
 using EventReporting.Model;
 using EventReporting.Model.Extensions;
 using EventReporting.Shared.DataTransferObjects.City;
+using EventReporting.Shared.DataTransferObjects.Event;
 using EventReporting.Shared.DataTransferObjects.Settlement;
 
 namespace EventReporting.BusinessLayer.AutoMapper
@@ -19,6 +20,8 @@ namespace EventReporting.BusinessLayer.AutoMapper
             CreateMap<CreateSettlementDto, Settlement>()
                 .ForMember(src => src.TypeOfSettlement, opt => opt.MapFrom(src => (ETypeOfSettlement)src.TypeOfSettlement));
 
+            CreateMap<Event, EventDto>();
+            CreateMap<CreateEventDto, Event>();
         }
     }
 }

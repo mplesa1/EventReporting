@@ -1,0 +1,19 @@
+﻿using EventReporting.Model;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace EventReporting.Shared.Contracts.DataAccess
+{
+    public interface IEventRepository
+    {
+        Task<ICollection<Event>> FindAllAsync();
+
+        Task CreateAsync(Event @event);
+
+        void UpdateAsync(Event @event);
+
+        Task<Event> FindByIdAsync(int id);
+
+        void DeleteAsync(Event @event);
+    }
+}

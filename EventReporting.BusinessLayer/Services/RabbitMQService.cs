@@ -55,5 +55,48 @@ namespace EventReporting.BusinessLayer.Services
             connectionFactory.UserName = _rabbitMqSettings.Username;
             return connectionFactory.CreateConnection();
         }
+
+        public void SendEventMessage(string message)
+        {
+            IConnection connection = null; ;
+            IModel model = null;
+            try
+            {
+                connection = GetConnection();
+                model = connection.CreateModel();
+
+                var body = Encoding.UTF8.GetBytes(message);
+
+                IBasicProperties basicProperties = model.CreateBasicProperties();
+                basicProperties.ContentType = "application/json";
+            //    basicProperties.Headers = new Dictionary<string, object>
+            //{
+            //    { "__TypeId__", "import url" }
+            //};
+                basicProperties.Priority = 0;
+                basicProperties.ContentEncoding = "UTF-8";
+                basicProperties.DeliveryMode = 2;
+
+
+                model.BasicPublish(string.Empty, _rabbitMqSettings.InputQueueName, basicProperties, body);
+
+                model.Close();
+                connection.Close();
+            }
+            catch (Exception ex)
+            {
+                if (model != null)
+                {
+                    model.Close();
+                }
+
+                if (connection != null)
+                {
+                    connection.Close();
+
+                }
+                throw;
+            }
+        }
     }
 }

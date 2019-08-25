@@ -40,9 +40,14 @@ namespace EventReporting
 
             services.AddScoped<ICityService, CityService>();
             services.AddScoped<ISettlementService, SettlementService>();
+            services.AddScoped<IRabbitMQService, RabbitMQService>();
+            services.AddScoped<IQueueSenderService, QueueSenderService>();
+            services.AddHostedService<QueueInputSubscriber>();
+            services.AddScoped<IEventService, EventService>();
 
             services.AddScoped<ICityRepository, CityRepository>();
             services.AddScoped<ISettlementRepository, SettlementRepository>();
+            services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             #region Autommaper
@@ -74,7 +79,7 @@ namespace EventReporting
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IConfiguration configuration)
         {
             if (env.IsDevelopment())
             {
@@ -88,7 +93,17 @@ namespace EventReporting
 
             app.UseHttpsRedirection();
 
-            app.UseSwagger();
+            app.UseSwagger(c =>
+            {
+                c.PreSerializeFilters.Add((doc, requset) =>
+                {
+                    var root = configuration.GetSection("SwaggerConfig:BaseRoute");
+                    if (!string.IsNullOrWhiteSpace(root.Value))
+                    {
+                        doc.Host = root.Value;
+                    }
+                });
+            });
 
             app.UseSwaggerUI(c =>
             {

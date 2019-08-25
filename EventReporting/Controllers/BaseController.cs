@@ -18,7 +18,7 @@ namespace EventReporting.Api.Controllers
 
         protected IActionResult ApiResponseOk()
         {
-            return Ok(ApiResponse.CreateResponse(null));
+            return Ok(ApiResponse.CreateResponse(System.Net.HttpStatusCode.OK ,null));
         }
     }
 }

@@ -10,5 +10,7 @@ namespace EventReporting.Shared.Contracts.Business
         IConnection GetConnection();
 
         void CreateQueues();
+
+        void SendEventMessage(string message);
     }
 }

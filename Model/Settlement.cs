@@ -14,5 +14,7 @@ namespace EventReporting.Model
 
         public int CityId { get; set; }
         public City City { get; set; }
+
+        public ICollection<Event> Events { get; set; }
     }
 }

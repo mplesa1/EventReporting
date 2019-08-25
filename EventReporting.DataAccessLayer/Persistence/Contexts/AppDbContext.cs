@@ -11,6 +11,7 @@ namespace EventReporting.DataAccessLayer.Persistence.Contexts
     {
         public DbSet<City> Cities { get; set; }
         public DbSet<Settlement> Settlements { get; set; }
+        public DbSet<Event> Events { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
