@@ -2,27 +2,28 @@
 using EventReporting.Shared.Contracts.Business;
 using EventReporting.Shared.Contracts.DataAccess;
 using EventReporting.Shared.DataTransferObjects.Event;
-using EventReporting.Shared.DataTransferObjects.Settlement;
+using EventReporting.Shared.Infrastructure.Models;
+using EventReporting.Shared.Infrastructure.Settings;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
-using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace EventReporting.BusinessLayer.Services
 {
     public class QueueSenderService : BaseService, IQueueSenderService
     {
         private readonly IRabbitMQService _rabbitMQService;
-
-        public QueueSenderService(IRabbitMQService rabbitMQService,
+        private readonly RabbitMqSettings _rabbitMqSettings;
+        public QueueSenderService(IRabbitMQService rabbitMQService, IOptions<RabbitMqSettings> options,
             IMapper mapper, IUnitOfWork unitOfWork) : base(mapper, unitOfWork)
         {
             _rabbitMQService = rabbitMQService;
+            _rabbitMqSettings = options.Value;
         }
 
-        public void Send(CreateEventDto createEventDto)
+        public bool SendToQueueInput(CreateEventDto createEventDto)
         {
             string md5Hash;
             StringBuilder sb = new StringBuilder();
@@ -49,16 +50,17 @@ namespace EventReporting.BusinessLayer.Services
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
             });
 
-            bool sended = true;
+            return _rabbitMQService.SendMessage(json, _rabbitMqSettings.InputQueueName);
+        }
 
-            try
+        public bool SendToQueueOutput(OutputQueueMessage outputQueueMessage)
+        {
+            string json = JsonConvert.SerializeObject(outputQueueMessage, new JsonSerializerSettings
             {
-                _rabbitMQService.SendEventMessage(json);
-            }
-            catch (Exception ex)
-            {
-                sended = false;
-            }
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            });
+
+            return _rabbitMQService.SendMessage(json, _rabbitMqSettings.OutputQueueName);
         }
     }
 }

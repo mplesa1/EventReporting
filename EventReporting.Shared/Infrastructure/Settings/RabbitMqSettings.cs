@@ -17,5 +17,7 @@ namespace EventReporting.Shared.Infrastructure.Settings
         public string OutputQueueName { get; set; }
 
         public string InputQueueName { get; set; }
+
+        public bool StartInputListener { get; set; }
     }
 }

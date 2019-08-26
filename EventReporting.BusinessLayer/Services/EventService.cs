@@ -30,6 +30,7 @@ namespace EventReporting.BusinessLayer.Services
 
         public async Task CreateAsync(CreateEventDto dto)
         {
+
             var @event = Map<CreateEventDto, Event>(dto);
             await _eventRepository.CreateAsync(@event);
             await _unitOfWork.CompleteAsync();
@@ -45,6 +46,21 @@ namespace EventReporting.BusinessLayer.Services
             }
 
             MapToInstance(dto, @event);
+
+            _eventRepository.UpdateAsync(@event);
+            await _unitOfWork.CompleteAsync();
+        }
+
+        public async Task UpdateSendedToOutputAsync(string md5, bool sendedOutput)
+        {
+            var @event = await _eventRepository.FindByMd5Async(md5);
+
+            if (@event == null)
+            {
+                throw new ResourceNotFoundException();
+            }
+
+            @event.SendedToOutput = sendedOutput;
 
             _eventRepository.UpdateAsync(@event);
             await _unitOfWork.CompleteAsync();

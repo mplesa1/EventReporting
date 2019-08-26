@@ -1,9 +1,12 @@
 ﻿using EventReporting.Shared.DataTransferObjects.Event;
+using EventReporting.Shared.Infrastructure.Models;
 
 namespace EventReporting.Shared.Contracts.Business
 {
     public interface IQueueSenderService
     {
-        void Send(CreateEventDto createEventDto);
+        bool SendToQueueInput(CreateEventDto createEventDto);
+
+        bool SendToQueueOutput(OutputQueueMessage outputQueueMessage);
     }
 }

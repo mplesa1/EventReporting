@@ -52,11 +52,13 @@ namespace EventReporting.DataAccessLayer.Persistence.Contexts
             builder.Entity<Event>().Property(e => e.Id).IsRequired().ValueGeneratedOnAdd();
             builder.Entity<Event>().Property(e => e.Description).IsRequired().HasMaxLength(400);
             builder.Entity<Event>().Property(e => e.Address).IsRequired().HasMaxLength(50);
+            builder.Entity<Event>().Property(e => e.Md5).IsRequired().HasMaxLength(32);
+            builder.Entity<Event>().Property(e => e.SendedToOutput);
 
             builder.Entity<Event>().HasData
             (
-            new Event { Id = 100, Description = "Poplava u slobi", Address = "V holjevca 22", SettlementId = 100 },
-            new Event { Id = 101, Description = "Sudar na kvatricu", Address = "Maksimirska 22", SettlementId = 101 }
+            new Event { Id = 100, Description = "Poplava u slobi", Address = "V holjevca 22", SettlementId = 100, Md5 = "322ec0c9adb9159ea7f295a3804e7307"},
+            new Event { Id = 101, Description = "Sudar na kvatricu", Address = "Maksimirska 22", SettlementId = 101, Md5 = "b0b6f992d42f06209861c124b8313f32" }
             );
         }
     }

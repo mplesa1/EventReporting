@@ -3,7 +3,6 @@ using EventReporting.Shared.Infrastructure.Settings;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace EventReporting.BusinessLayer.Services
@@ -42,7 +41,7 @@ namespace EventReporting.BusinessLayer.Services
                     connection.Close();
 
                 }
-                throw;
+                Console.WriteLine(ex.Message);
             }
         }
 
@@ -56,30 +55,22 @@ namespace EventReporting.BusinessLayer.Services
             return connectionFactory.CreateConnection();
         }
 
-        public void SendEventMessage(string message)
+        public bool SendMessage(string message, string queueName)
         {
-            IConnection connection = null; ;
+            IConnection connection = null;
             IModel model = null;
+            bool sended = true;
             try
             {
                 connection = GetConnection();
                 model = connection.CreateModel();
-
                 var body = Encoding.UTF8.GetBytes(message);
-
                 IBasicProperties basicProperties = model.CreateBasicProperties();
                 basicProperties.ContentType = "application/json";
-            //    basicProperties.Headers = new Dictionary<string, object>
-            //{
-            //    { "__TypeId__", "import url" }
-            //};
                 basicProperties.Priority = 0;
                 basicProperties.ContentEncoding = "UTF-8";
                 basicProperties.DeliveryMode = 2;
-
-
-                model.BasicPublish(string.Empty, _rabbitMqSettings.InputQueueName, basicProperties, body);
-
+                model.BasicPublish(string.Empty, queueName, basicProperties, body);
                 model.Close();
                 connection.Close();
             }
@@ -95,8 +86,11 @@ namespace EventReporting.BusinessLayer.Services
                     connection.Close();
 
                 }
-                throw;
+                Console.WriteLine(ex.Message);
+                sended = false;
             }
+
+            return sended;
         }
     }
 }

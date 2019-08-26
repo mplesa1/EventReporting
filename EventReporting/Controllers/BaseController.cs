@@ -1,9 +1,5 @@
 ﻿using EventReporting.Shared.Infrastructure.Models;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace EventReporting.Api.Controllers
 {
@@ -19,6 +15,11 @@ namespace EventReporting.Api.Controllers
         protected IActionResult ApiResponseOk()
         {
             return Ok(ApiResponse.CreateResponse(System.Net.HttpStatusCode.OK ,null));
+        }
+
+        protected IActionResult ApiResponseBadRequest()
+        {
+            return Ok(ApiResponse.CreateResponse(System.Net.HttpStatusCode.BadRequest, null));
         }
     }
 }

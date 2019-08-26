@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using EventReporting.Api.Extensions;
+﻿using EventReporting.Api.Extensions;
 using EventReporting.Shared.Contracts.Business;
 using EventReporting.Shared.DataTransferObjects.Event;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventReporting.Api.Controllers
@@ -26,8 +21,15 @@ namespace EventReporting.Api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState.GetErrorMessages());
 
-            _queueSenderService.Send(request);
-            return ApiResponseOk();
+            bool sended = _queueSenderService.SendToQueueInput(request);
+            if (sended)
+            {
+                return ApiResponseOk();
+            }
+            else
+            {
+                return ApiResponseBadRequest();
+            }
         }
     }
 }

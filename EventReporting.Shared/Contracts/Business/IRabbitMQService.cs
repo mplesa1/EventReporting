@@ -11,6 +11,6 @@ namespace EventReporting.Shared.Contracts.Business
 
         void CreateQueues();
 
-        void SendEventMessage(string message);
+        bool SendMessage(string message, string queueName);
     }
 }

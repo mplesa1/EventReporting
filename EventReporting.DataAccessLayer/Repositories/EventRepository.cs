@@ -33,6 +33,11 @@ namespace EventReporting.DataAccessLayer.Repositories
             return await _context.Events.FindAsync(id);
         }
 
+        public async Task<Event> FindByMd5Async(string md5)
+        {
+            return await _context.Events.FirstOrDefaultAsync(e => e.Md5 == md5);
+        }
+
         public void UpdateAsync(Event @event)
         {
             _context.Events.Update(@event);
