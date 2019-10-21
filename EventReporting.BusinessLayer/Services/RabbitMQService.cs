@@ -39,8 +39,8 @@ namespace EventReporting.BusinessLayer.Services
                 if (connection != null)
                 {
                     connection.Close();
-
                 }
+
                 Console.WriteLine(ex.Message);
             }
         }
@@ -84,8 +84,8 @@ namespace EventReporting.BusinessLayer.Services
                 if (connection != null)
                 {
                     connection.Close();
-
                 }
+
                 Console.WriteLine(ex.Message);
                 sended = false;
             }
