@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace EventReporting.Api.Controllers
 {
-    [ApiController]
     public class CityController : BaseController
     {
         private readonly ICityService _cityService;

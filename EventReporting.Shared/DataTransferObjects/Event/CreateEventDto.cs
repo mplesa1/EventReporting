@@ -15,8 +15,8 @@ namespace EventReporting.Shared.DataTransferObjects.Event
         [MaxLength(80)]
         public string Address { get; set; }
 
-        [Required]
-        [MaxLength(32)]
+        //[Required]
+        //[MaxLength(32)]
         public string Md5 { get; set; }
 
         [Required]

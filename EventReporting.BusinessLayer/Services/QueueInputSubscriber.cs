@@ -54,41 +54,41 @@ namespace EventReporting.BusinessLayer.Services
             _model = _connection.CreateModel();
             var consumer = new EventingBasicConsumer(_model);
                 _model.QueueDeclare(_rabbitMqSettings.InputQueueName, false, false, true, null);
-                consumer.Received += async (model, ea) =>
+            consumer.Received += async (model, ea) =>
+            {
+                var body = ea.Body;
+                var message = Encoding.UTF8.GetString(body);
+
+                try
                 {
-                    var body = ea.Body;
-                    var message = Encoding.UTF8.GetString(body);
-
-                    try
-                    {
-                        CreateEventDto dto = JsonConvert.DeserializeObject<CreateEventDto>(message);
-                        outputQueueMessage.Md5 = dto.Md5;
-                        using (var scope = _serviceProvider.CreateScope())
-                        {
-                            var eventService = scope.ServiceProvider.GetRequiredService<IEventService>();
-                            await eventService.CreateAsync(dto);
-                        }
-                        outputQueueMessage.EventStatus = EventStatusConstants.SUCCESSFULLY_RECEIVED;
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                        outputQueueMessage.EventStatus = EventStatusConstants.UNSUCCESSFULLY_RECEIVED;
-                    }
-
-                    var sended = true;
-                    using (var scope = _serviceProvider.CreateScope())
-                    {
-                        var queueSenderService = scope.ServiceProvider.GetRequiredService<IQueueSenderService>();
-                        sended = queueSenderService.SendToQueueOutput(outputQueueMessage);
-                    }
-
+                    CreateEventDto dto = JsonConvert.DeserializeObject<CreateEventDto>(message);
+                    outputQueueMessage.Md5 = dto.Md5;
                     using (var scope = _serviceProvider.CreateScope())
                     {
                         var eventService = scope.ServiceProvider.GetRequiredService<IEventService>();
-                        await eventService.UpdateSendedToOutputAsync(outputQueueMessage.Md5, sended);
+                        await eventService.CreateAsync(dto);
                     }
-                };
+                    outputQueueMessage.EventStatus = EventStatusConstants.SUCCESSFULLY_RECEIVED;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    outputQueueMessage.EventStatus = EventStatusConstants.UNSUCCESSFULLY_RECEIVED;
+                }
+
+                var sended = true;
+                using (var scope = _serviceProvider.CreateScope())
+                {
+                    var queueSenderService = scope.ServiceProvider.GetRequiredService<IQueueSenderService>();
+                    sended = queueSenderService.SendToQueueOutput(outputQueueMessage);
+                }
+
+                using (var scope = _serviceProvider.CreateScope())
+                {
+                    var eventService = scope.ServiceProvider.GetRequiredService<IEventService>();
+                    await eventService.UpdateSendedToOutputAsync(outputQueueMessage.Md5, sended);
+                }
+            };
              
             _model.BasicConsume(queue: _rabbitMqSettings.InputQueueName,
                                  autoAck: true,

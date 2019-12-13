@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EventReporting.Api.Controllers
 {
-    [ApiController]
     public class QueueSenderController : BaseController
     {
         private readonly IQueueSenderService _queueSenderService;

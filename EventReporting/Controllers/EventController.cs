@@ -1,6 +1,5 @@
 ﻿using EventReporting.Api.Extensions;
 using EventReporting.Shared.Contracts.Business;
-using EventReporting.Shared.DataTransferObjects.City;
 using EventReporting.Shared.DataTransferObjects.Event;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -8,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace EventReporting.Api.Controllers
 {
-    [ApiController]
     public class EventController : BaseController
     {
         private readonly IEventService _eventService;

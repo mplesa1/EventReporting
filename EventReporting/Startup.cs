@@ -7,13 +7,12 @@ using EventReporting.Shared.Contracts.Business;
 using EventReporting.Shared.Contracts.DataAccess;
 using EventReporting.Shared.Infrastructure.Settings;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
 
 namespace EventReporting
 {
@@ -29,26 +28,31 @@ namespace EventReporting
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
+            //services.AddRazorPages();
+            services.AddControllers();
+            services.AddMvcCore()
+                    .AddApiExplorer();
             services.AddDbContext<AppDbContext>(options => {
                 options.UseInMemoryDatabase("event-reporting-in-memory");
             });
 
-
             services.Configure<RabbitMqSettings>(Configuration.GetSection(nameof(RabbitMqSettings)));
 
+            #region Services DI
             services.AddScoped<ICityService, CityService>();
             services.AddScoped<ISettlementService, SettlementService>();
             services.AddScoped<IRabbitMQService, RabbitMQService>();
             services.AddScoped<IQueueSenderService, QueueSenderService>();
             services.AddHostedService<QueueInputSubscriber>();
             services.AddScoped<IEventService, EventService>();
+            #endregion
 
+            #region Repositories DI
             services.AddScoped<ICityRepository, CityRepository>();
             services.AddScoped<ISettlementRepository, SettlementRepository>();
             services.AddScoped<IEventRepository, EventRepository>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>(); 
+            #endregion
 
             #region Autommaper
             var mappingConfig = new MapperConfiguration(mc =>
@@ -62,7 +66,7 @@ namespace EventReporting
 
             services.AddSwaggerGen(cfg =>
             {
-                cfg.SwaggerDoc("v1", new Info
+                cfg.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "EventReporting API",
                     Version = "v1.1",
@@ -92,25 +96,32 @@ namespace EventReporting
             }
 
             app.UseHttpsRedirection();
-
-            app.UseSwagger(c =>
+            app.UseRouting();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
             {
-                c.PreSerializeFilters.Add((doc, requset) =>
-                {
-                    var root = configuration.GetSection("SwaggerConfig:BaseRoute");
-                    if (!string.IsNullOrWhiteSpace(root.Value))
-                    {
-                        doc.Host = root.Value;
-                    }
-                });
+                endpoints.MapControllers();
             });
+            //app.UseSwagger(c =>
+            //{
+            //    c.PreSerializeFilters.Add((doc, requset) =>
+            //    {
+            //        var root = configuration.GetSection("SwaggerConfig:BaseRoute");
+            //        if (!string.IsNullOrWhiteSpace(root.Value))
+            //        {
+            //            doc.Host = root.Value;
+            //        }
+            //    });
+            //});
+
+            app.UseSwagger();
 
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "EventReporting API");
             });
 
-            app.UseMvc();
+            //app.UseMvc();
         }
     }
 }

@@ -1,9 +1,5 @@
 ﻿using EventReporting.Model;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace EventReporting.DataAccessLayer.Persistence.Contexts
 {
@@ -19,7 +15,6 @@ namespace EventReporting.DataAccessLayer.Persistence.Contexts
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-
             builder.Entity<City>().ToTable("cities");
             builder.Entity<City>().HasKey(c => c.Id);
             builder.Entity<City>().Property(c => c.Id).IsRequired().ValueGeneratedOnAdd();
@@ -29,7 +24,7 @@ namespace EventReporting.DataAccessLayer.Persistence.Contexts
             builder.Entity<City>().HasData
             (
                 new City { Id = 100, Name = "Zagreb" }, // Id set manually due to in-memory provider
-                new City { Id = 101, Name = "Gorica" }
+                new City { Id = 101, Name = "Velika Gorica" }
             );
 
             builder.Entity<Settlement>().ToTable("settlements");
@@ -43,7 +38,8 @@ namespace EventReporting.DataAccessLayer.Persistence.Contexts
             (
             new Settlement { Id = 100, Name = "Sloboština", PostalCode = "10010", TypeOfSettlement = ETypeOfSettlement.Neighborhood, CityId = 100 },
             new Settlement { Id = 101, Name = "Maksimir", PostalCode = "10000", TypeOfSettlement = ETypeOfSettlement.Neighborhood, CityId = 100 },
-            new Settlement { Id = 102, Name = "Ciblja", PostalCode = "10050", TypeOfSettlement = ETypeOfSettlement.Neighborhood, CityId = 101 }
+            new Settlement { Id = 103, Name = "Velika Gorica centar", PostalCode = "10408", TypeOfSettlement = ETypeOfSettlement.Neighborhood, CityId = 101 },
+            new Settlement { Id = 104, Name = "Črnomerec", PostalCode = "10000", TypeOfSettlement = ETypeOfSettlement.Neighborhood, CityId = 101 }
             );
 
 
