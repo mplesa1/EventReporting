@@ -32,8 +32,14 @@ namespace EventReporting
             services.AddControllers();
             services.AddMvcCore()
                     .AddApiExplorer();
-            services.AddDbContext<AppDbContext>(options => {
-                options.UseInMemoryDatabase("event-reporting-in-memory");
+            //services.AddDbContext<AppDbContext>(options => {
+            //    options.UseInMemoryDatabase("event-reporting-in-memory");
+            //});
+
+            services.AddEntityFrameworkNpgsql().AddDbContext<AppDbContext>(options =>
+            {
+                options.UseNpgsql(Configuration.GetConnectionString("databaseString"));
+                options.EnableSensitiveDataLogging();
             });
 
             services.Configure<RabbitMqSettings>(Configuration.GetSection(nameof(RabbitMqSettings)));

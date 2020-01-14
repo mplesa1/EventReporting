@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace EventReporting.Model
+﻿namespace EventReporting.Model
 {
     public class BaseEntity
     {

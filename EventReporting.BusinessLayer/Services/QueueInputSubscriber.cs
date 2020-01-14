@@ -83,8 +83,9 @@ namespace EventReporting.BusinessLayer.Services
                     sended = queueSenderService.SendToQueueOutput(outputQueueMessage);
                 }
 
-                using (var scope = _serviceProvider.CreateScope())
+                if (outputQueueMessage.EventStatus == EventStatusConstants.SUCCESSFULLY_RECEIVED)
                 {
+                    using var scope = _serviceProvider.CreateScope();
                     var eventService = scope.ServiceProvider.GetRequiredService<IEventService>();
                     await eventService.UpdateSendedToOutputAsync(outputQueueMessage.Md5, sended);
                 }

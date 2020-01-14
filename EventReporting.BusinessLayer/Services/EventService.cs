@@ -12,11 +12,13 @@ namespace EventReporting.BusinessLayer.Services
     public class EventService : BaseService, IEventService
     {
         private readonly IEventRepository _eventRepository;
+        private readonly ISettlementRepository _settlementRepository;
 
-        public EventService(IEventRepository eventRepository,
+        public EventService(IEventRepository eventRepository, ISettlementRepository settlementRepository,
             IMapper mapper, IUnitOfWork unitOfWork) : base(mapper, unitOfWork)
         {
             _eventRepository = eventRepository;
+            _settlementRepository = settlementRepository;
         }
 
         public async Task<ICollection<EventDto>> FindAllAsync()
@@ -30,6 +32,10 @@ namespace EventReporting.BusinessLayer.Services
 
         public async Task CreateAsync(CreateEventDto dto)
         {
+            if(_settlementRepository.FindByIdAsync(dto.SettlementId) == null)
+            {
+                throw new ResourceNotFoundException();
+            }
 
             var @event = Map<CreateEventDto, Event>(dto);
             await _eventRepository.CreateAsync(@event);
