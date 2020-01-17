@@ -39,7 +39,6 @@ namespace EventReporting.BusinessLayer.Services
 
             var @event = Map<CreateEventDto, Event>(dto);
             await _eventRepository.CreateAsync(@event);
-            await _unitOfWork.CompleteAsync();
         }
 
         public async Task UpdateAsync(int eventId, CreateEventDto dto)
@@ -53,8 +52,8 @@ namespace EventReporting.BusinessLayer.Services
 
             MapToInstance(dto, @event);
 
-            _eventRepository.UpdateAsync(@event);
-            await _unitOfWork.CompleteAsync();
+            await _eventRepository.UpdateAsync(@event);
+            //await _unitOfWork.CompleteAsync();
         }
 
         public async Task UpdateSendedToOutputAsync(string md5, bool sendedOutput)
@@ -68,8 +67,8 @@ namespace EventReporting.BusinessLayer.Services
 
             @event.SendedToOutput = sendedOutput;
 
-            _eventRepository.UpdateAsync(@event);
-            await _unitOfWork.CompleteAsync();
+            await _eventRepository.UpdateAsync(@event);
+            //await _unitOfWork.CompleteAsync();
         }
 
         public async Task DeleteAsync(int eventId)

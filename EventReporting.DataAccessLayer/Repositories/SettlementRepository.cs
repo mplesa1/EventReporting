@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EventReporting.DataAccessLayer.Repositories
 {
-    public class SettlementRepository : BaseRepository, ISettlementRepository
+    public class SettlementRepository : BaseRepository<Settlement>, ISettlementRepository
     {
         public SettlementRepository(AppDbContext context) : base(context)
         {
@@ -15,29 +15,29 @@ namespace EventReporting.DataAccessLayer.Repositories
 
         public async Task CreateAsync(Settlement settlement)
         {
-            await _context.Settlements.AddAsync(settlement);
+            await _dbSet.AddAsync(settlement);
         }
 
         public async Task<ICollection<Settlement>> FindAllAsync()
         {
-            return await _context.Settlements
+            return await _dbSet
                 .Include(s => s.City)
                 .ToListAsync();
         }
 
         public void UpdateAsync(Settlement settlement)
         {
-            _context.Settlements.Update(settlement);
+            _dbSet.Update(settlement);
         }
 
         public async Task<Settlement> FindByIdAsync(int id)
         {
-            return await _context.Settlements.FindAsync(id);
+            return await _dbSet.FindAsync(id);
         }
 
         public void DeleteAsync(Settlement settlement)
         {
-            _context.Settlements.Remove(settlement);
+            _dbSet.Remove(settlement);
         }
     }
 }

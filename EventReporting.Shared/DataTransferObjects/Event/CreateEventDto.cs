@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace EventReporting.Shared.DataTransferObjects.Event
 {
@@ -15,11 +12,11 @@ namespace EventReporting.Shared.DataTransferObjects.Event
         [MaxLength(80)]
         public string Address { get; set; }
 
-        //[Required]
-        //[MaxLength(32)]
-        public string Md5 { get; set; }
-
         [Required]
         public int SettlementId { get; set; }
+
+        public string Md5 { get; set; }
+
+        public int UserId { get; set; }
     }
 }

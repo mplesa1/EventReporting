@@ -20,5 +20,9 @@ namespace EventReporting.Model
         [Required]
         public int SettlementId { get; set; }
         public Settlement Settlement { get; set; }
+
+        [Required]
+        public int UserId { get; set; }
+        public EventReporting.Model.User.User User { get; set; }
     }
 }

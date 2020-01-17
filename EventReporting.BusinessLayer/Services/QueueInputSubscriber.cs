@@ -76,18 +76,25 @@ namespace EventReporting.BusinessLayer.Services
                     outputQueueMessage.EventStatus = EventStatusConstants.UNSUCCESSFULLY_RECEIVED;
                 }
 
-                var sended = true;
-                using (var scope = _serviceProvider.CreateScope())
+                try
                 {
-                    var queueSenderService = scope.ServiceProvider.GetRequiredService<IQueueSenderService>();
-                    sended = queueSenderService.SendToQueueOutput(outputQueueMessage);
-                }
+                    var sended = true;
+                    using (var scope = _serviceProvider.CreateScope())
+                    {
+                        var queueSenderService = scope.ServiceProvider.GetRequiredService<IQueueSenderService>();
+                        sended = queueSenderService.SendToQueueOutput(outputQueueMessage);
+                    }
 
-                if (outputQueueMessage.EventStatus == EventStatusConstants.SUCCESSFULLY_RECEIVED)
+                    if (outputQueueMessage.EventStatus == EventStatusConstants.SUCCESSFULLY_RECEIVED)
+                    {
+                        using var scope = _serviceProvider.CreateScope();
+                        var eventService = scope.ServiceProvider.GetRequiredService<IEventService>();
+                        await eventService.UpdateSendedToOutputAsync(outputQueueMessage.Md5, sended);
+                    }
+                }
+                catch(Exception ex)
                 {
-                    using var scope = _serviceProvider.CreateScope();
-                    var eventService = scope.ServiceProvider.GetRequiredService<IEventService>();
-                    await eventService.UpdateSendedToOutputAsync(outputQueueMessage.Md5, sended);
+                    Console.WriteLine(ex.Message);
                 }
             };
              

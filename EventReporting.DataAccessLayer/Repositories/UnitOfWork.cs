@@ -1,8 +1,5 @@
 ﻿using EventReporting.DataAccessLayer.Persistence.Contexts;
 using EventReporting.Shared.Contracts.DataAccess;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace EventReporting.DataAccessLayer.Repositories

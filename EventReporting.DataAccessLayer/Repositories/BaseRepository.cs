@@ -1,17 +1,17 @@
 ﻿using EventReporting.DataAccessLayer.Persistence.Contexts;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 namespace EventReporting.DataAccessLayer.Repositories
 {
-    public abstract class BaseRepository
+    public abstract class BaseRepository<T> where T : class
     {
-        protected readonly AppDbContext _context;
+        protected AppDbContext _dbContext;
+        protected DbSet<T> _dbSet;
 
         public BaseRepository(AppDbContext context)
         {
-            _context = context;
+            _dbContext = context;
+            _dbSet = _dbContext.Set<T>();
         }
     }
 }

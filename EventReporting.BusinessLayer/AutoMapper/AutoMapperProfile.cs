@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using EventReporting.Model;
 using EventReporting.Model.Extensions;
+using EventReporting.Model.User;
 using EventReporting.Shared.DataTransferObjects.City;
 using EventReporting.Shared.DataTransferObjects.Event;
 using EventReporting.Shared.DataTransferObjects.Settlement;
+using EventReporting.Shared.DataTransferObjects.User;
 
 namespace EventReporting.BusinessLayer.AutoMapper
 {
@@ -22,6 +24,10 @@ namespace EventReporting.BusinessLayer.AutoMapper
 
             CreateMap<Event, EventDto>();
             CreateMap<CreateEventDto, Event>();
+
+            CreateMap<User, UserDto>();
+            CreateMap<Role, RoleDto>();
+            CreateMap<RegistrationDto, User>();
         }
     }
 }

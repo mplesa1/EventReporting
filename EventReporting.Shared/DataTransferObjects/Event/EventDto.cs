@@ -1,4 +1,5 @@
 ﻿using EventReporting.Shared.DataTransferObjects.Settlement;
+using EventReporting.Shared.DataTransferObjects.User;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,5 +15,7 @@ namespace EventReporting.Shared.DataTransferObjects.Event
         public string Md5 { get; set; }
 
         public SettlementDto Settlement { get; set; }
+
+        public UserDto User { get; set; }
     }
 }

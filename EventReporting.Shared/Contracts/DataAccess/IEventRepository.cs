@@ -10,7 +10,7 @@ namespace EventReporting.Shared.Contracts.DataAccess
 
         Task CreateAsync(Event @event);
 
-        void UpdateAsync(Event @event);
+        Task UpdateAsync(Event @event);
 
         Task<Event> FindByIdAsync(int id);
 

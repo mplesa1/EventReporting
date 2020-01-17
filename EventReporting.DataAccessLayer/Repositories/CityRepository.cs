@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EventReporting.DataAccessLayer.Repositories
 {
-    public class CityRepository : BaseRepository, ICityRepository
+    public class CityRepository : BaseRepository<City>, ICityRepository
     {
         public CityRepository(AppDbContext context) : base(context)
         {
@@ -15,27 +15,27 @@ namespace EventReporting.DataAccessLayer.Repositories
 
         public async Task CreateAsync(City city)
         {
-            await _context.Cities.AddAsync(city);
+            await _dbSet.AddAsync(city);
         }
 
         public async Task<ICollection<City>> FindAllAsync()
         {
-            return await _context.Cities.ToListAsync();
+            return await _dbSet.ToListAsync();
         }
 
         public void UpdateAsync(City city)
         {
-            _context.Cities.Update(city);
+            _dbSet.Update(city);
         }
 
         public async Task<City> FindByIdAsync(int id)
         {
-            return await _context.Cities.FindAsync(id);
+            return await _dbSet.FindAsync(id);
         }
 
         public void DeleteAsync(City city)
         {
-            _context.Cities.Remove(city);
+            _dbSet.Remove(city);
         }
     }
 }
