@@ -2,7 +2,6 @@
 using EventReporting.Shared.Contracts.Business;
 using EventReporting.Shared.DataTransferObjects.City;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace EventReporting.Api.Controllers
@@ -17,10 +16,10 @@ namespace EventReporting.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ICollection<CityDto>> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync()
         {
             var cities = await _cityService.FindAllAsync();
-            return cities;
+            return ApiResponseOk(cities);
         }
 
         [HttpPost]

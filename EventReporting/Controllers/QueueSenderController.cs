@@ -4,8 +4,6 @@ using EventReporting.Shared.Contracts.Business;
 using EventReporting.Shared.DataTransferObjects.Event;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
-using System.Security.Claims;
 
 namespace EventReporting.Api.Controllers
 {

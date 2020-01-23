@@ -36,6 +36,14 @@ namespace EventReporting
             services.AddMvcCore()
                     .AddApiExplorer();
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+            });
+
             services.AddSwaggerDocumentation();
 
             services.AddEntityFrameworkNpgsql().AddDbContext<AppDbContext>(options =>
@@ -118,6 +126,7 @@ namespace EventReporting
             }
 
             app.UseHttpsRedirection();
+            app.UseCors("CorsPolicy");
             app.UseRouting();
             app.UseAuthorization();
             app.UseAuthentication();

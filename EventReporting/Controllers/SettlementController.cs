@@ -2,7 +2,6 @@
 using EventReporting.Shared.Contracts.Business;
 using EventReporting.Shared.DataTransferObjects.Settlement;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace EventReporting.Api.Controllers
@@ -17,10 +16,10 @@ namespace EventReporting.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ICollection<SettlementDto>> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync()
         {
             var settlements = await _settlementService.FindAllAsync();
-            return settlements;
+            return ApiResponseOk(settlements);
         }
 
         [HttpPost]

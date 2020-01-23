@@ -95,7 +95,7 @@ namespace EventReporting.BusinessLayer.Services
                 FirstName = registrationDto.FirstName,
                 LastName = registrationDto.LastName,
                 PIN = registrationDto.PIN,
-                PasswordHash = registrationDto.PasswordHash
+                PasswordHash = registrationDto.Password
             };
 
             userToRegister.UserRoles = new List<UserRole>
@@ -151,7 +151,7 @@ namespace EventReporting.BusinessLayer.Services
                 issuer: _config["Jwt:Issuer"],
                 audience: _config["Jwt:Issuer"],
                 claims,
-                expires: DateTime.Now.AddMinutes(60),
+                expires: DateTime.Now.AddMinutes(600),
                 signingCredentials: credentials
             );
 

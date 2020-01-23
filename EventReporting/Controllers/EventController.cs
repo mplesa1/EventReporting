@@ -2,7 +2,6 @@
 using EventReporting.Shared.Contracts.Business;
 using EventReporting.Shared.DataTransferObjects.Event;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace EventReporting.Api.Controllers
@@ -17,10 +16,10 @@ namespace EventReporting.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ICollection<EventDto>> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync()
         {
             var events = await _eventService.FindAllAsync();
-            return events;
+            return ApiResponseOk(events);
         }
 
         [HttpPut("{eventId}")]
