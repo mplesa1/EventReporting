@@ -22,7 +22,7 @@ namespace EventReporting.BusinessLayer.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public QueueSenderService(IRabbitMQService rabbitMQService, IOptions<RabbitMqSettings> options, IHttpContextAccessor httpContextAccessor,
-            IMapper mapper, IUnitOfWork unitOfWork) : base(mapper, unitOfWork)
+            IMapper mapper) : base(mapper)
         {
             _rabbitMQService = rabbitMQService;
             _rabbitMqSettings = options.Value;

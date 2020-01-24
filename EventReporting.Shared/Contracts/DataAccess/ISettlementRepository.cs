@@ -12,10 +12,10 @@ namespace EventReporting.Shared.Contracts.DataAccess
 
         Task CreateAsync(Settlement settlement);
 
-        void UpdateAsync(Settlement settlement);
+        Task UpdateAsync(Settlement settlement);
 
         Task<Settlement> FindByIdAsync(int id);
 
-        void DeleteAsync(Settlement city);
+        Task DeleteAsync(Settlement city);
     }
 }

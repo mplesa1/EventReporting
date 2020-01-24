@@ -16,6 +16,7 @@ namespace EventReporting.DataAccessLayer.Repositories
         public async Task CreateAsync(City city)
         {
             await _dbSet.AddAsync(city);
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task<ICollection<City>> FindAllAsync()
@@ -23,9 +24,10 @@ namespace EventReporting.DataAccessLayer.Repositories
             return await _dbSet.ToListAsync();
         }
 
-        public void UpdateAsync(City city)
+        public async Task UpdateAsync(City city)
         {
             _dbSet.Update(city);
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task<City> FindByIdAsync(int id)
@@ -33,9 +35,10 @@ namespace EventReporting.DataAccessLayer.Repositories
             return await _dbSet.FindAsync(id);
         }
 
-        public void DeleteAsync(City city)
+        public async Task DeleteAsync(City city)
         {
             _dbSet.Remove(city);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

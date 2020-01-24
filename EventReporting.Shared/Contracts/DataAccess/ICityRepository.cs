@@ -10,10 +10,10 @@ namespace EventReporting.Shared.Contracts.DataAccess
 
         Task CreateAsync(City city);
 
-        void UpdateAsync(City city);
+        Task UpdateAsync(City city);
 
         Task<City> FindByIdAsync(int id);
 
-        void DeleteAsync(City city);
+        Task DeleteAsync(City city);
     }
 }

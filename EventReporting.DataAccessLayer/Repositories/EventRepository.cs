@@ -19,9 +19,10 @@ namespace EventReporting.DataAccessLayer.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public void DeleteAsync(Event @event)
+        public async Task DeleteAsync(Event @event)
         {
             _dbSet.Remove(@event);
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task<ICollection<Event>> FindAllAsync()

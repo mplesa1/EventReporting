@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Authentication;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using EventReporting.Model.User;
 using EventReporting.Shared.Contracts.Business;
-using EventReporting.Shared.Contracts.DataAccess;
 using EventReporting.Shared.DataTransferObjects.User;
 using EventReporting.Shared.Infrastructure.Constants;
 using EventReporting.Shared.Infrastructure.Exceptions;
@@ -17,6 +8,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Authentication;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
 using JwtConstants = EventReporting.Shared.Infrastructure.Constants.JwtConstants;
 
 namespace EventReporting.BusinessLayer.Services
@@ -30,7 +29,7 @@ namespace EventReporting.BusinessLayer.Services
         public UserService(UserManager<User> userManager,
             IUserRepository userRepository,
             IConfiguration config,
-            IMapper mapper, IUnitOfWork unitOfWork) : base(mapper, unitOfWork)
+            IMapper mapper) : base(mapper)
         {
             _userManager = userManager;
             _userRepository = userRepository;

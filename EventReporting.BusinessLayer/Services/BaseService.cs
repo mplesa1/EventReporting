@@ -10,13 +10,11 @@ namespace EventReporting.BusinessLayer.Services
     {
         protected readonly IMapper _mapper;
 
-        protected readonly IUnitOfWork _unitOfWork;
-
-        protected BaseService(IMapper mapper, IUnitOfWork unitOfWork)
+        protected BaseService(IMapper mapper)
         {
             _mapper = mapper;
-            _unitOfWork = unitOfWork;
         }
+
         /// <summary>
         /// Map object to desired type.
         /// </summary>

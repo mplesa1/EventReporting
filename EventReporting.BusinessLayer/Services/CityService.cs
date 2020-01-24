@@ -14,7 +14,7 @@ namespace EventReporting.BusinessLayer.Services
         private readonly ICityRepository _cityRepository;
 
         public CityService(ICityRepository cityRepository,
-            IMapper mapper, IUnitOfWork unitOfWork) : base(mapper, unitOfWork)
+            IMapper mapper) : base(mapper)
         {
             _cityRepository = cityRepository;
         }
@@ -32,7 +32,6 @@ namespace EventReporting.BusinessLayer.Services
         {
             var city = Map<CreateCityDto, City>(dto);
             await _cityRepository.CreateAsync(city);
-            await _unitOfWork.CompleteAsync();
         }
 
         public async Task UpdateAsync(int cityId, CreateCityDto dto)
@@ -46,8 +45,7 @@ namespace EventReporting.BusinessLayer.Services
 
             MapToInstance(dto, city);
 
-            _cityRepository.UpdateAsync(city);
-            await _unitOfWork.CompleteAsync();
+            await _cityRepository.UpdateAsync(city);
         }
 
         public async Task DeleteAsync(int cityId)
@@ -59,8 +57,7 @@ namespace EventReporting.BusinessLayer.Services
                 throw new ResourceNotFoundException();
             }
 
-            _cityRepository.DeleteAsync(city);
-            await _unitOfWork.CompleteAsync();
+            await _cityRepository.DeleteAsync(city);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace EventReporting.BusinessLayer.Services
         private readonly ISettlementRepository _settlementRepository;
 
         public EventService(IEventRepository eventRepository, ISettlementRepository settlementRepository,
-            IMapper mapper, IUnitOfWork unitOfWork) : base(mapper, unitOfWork)
+            IMapper mapper) : base(mapper)
         {
             _eventRepository = eventRepository;
             _settlementRepository = settlementRepository;
@@ -53,7 +53,6 @@ namespace EventReporting.BusinessLayer.Services
             MapToInstance(dto, @event);
 
             await _eventRepository.UpdateAsync(@event);
-            //await _unitOfWork.CompleteAsync();
         }
 
         public async Task UpdateSendedToOutputAsync(string md5, bool sendedOutput)
@@ -80,8 +79,7 @@ namespace EventReporting.BusinessLayer.Services
                 throw new ResourceNotFoundException();
             }
 
-            _eventRepository.DeleteAsync(@event);
-            await _unitOfWork.CompleteAsync();
+            await _eventRepository.DeleteAsync(@event);
         }
     }
 }

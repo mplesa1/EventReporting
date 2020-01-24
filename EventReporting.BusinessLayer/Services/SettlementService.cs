@@ -14,7 +14,7 @@ namespace EventReporting.BusinessLayer.Services
         private readonly ISettlementRepository _settlementRepository;
 
         public SettlementService(ISettlementRepository settlementRepository,
-            IMapper mapper, IUnitOfWork unitOfWork) : base(mapper, unitOfWork)
+            IMapper mapper) : base(mapper)
         {
             _settlementRepository = settlementRepository;
         }
@@ -32,7 +32,6 @@ namespace EventReporting.BusinessLayer.Services
         {
             var settlement = Map<CreateSettlementDto, Settlement>(dto);
             await _settlementRepository.CreateAsync(settlement);
-            await _unitOfWork.CompleteAsync();
         }
 
         public async Task UpdateAsync(int settlementId, CreateSettlementDto dto)
@@ -46,8 +45,7 @@ namespace EventReporting.BusinessLayer.Services
 
             MapToInstance(dto, settlement);
 
-            _settlementRepository.UpdateAsync(settlement);
-            await _unitOfWork.CompleteAsync();
+            await _settlementRepository.UpdateAsync(settlement);
         }
 
         public async Task DeleteAsync(int settlementId)
@@ -59,8 +57,7 @@ namespace EventReporting.BusinessLayer.Services
                 throw new ResourceNotFoundException();
             }
 
-            _settlementRepository.DeleteAsync(settlement);
-            await _unitOfWork.CompleteAsync();
+            await _settlementRepository.DeleteAsync(settlement);
         }
     }
 }

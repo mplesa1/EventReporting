@@ -1,22 +1,16 @@
-﻿using AutoMapper;
-using EventReporting.Api.Infrastructure;
-using EventReporting.BusinessLayer.AutoMapper;
+﻿using EventReporting.Api.Infrastructure;
 using EventReporting.BusinessLayer.Services;
 using EventReporting.DataAccessLayer.Persistence.Contexts;
-using EventReporting.DataAccessLayer.Repositories;
 using EventReporting.Model.User;
 using EventReporting.Shared.Contracts.Business;
-using EventReporting.Shared.Contracts.DataAccess;
 using EventReporting.Shared.Infrastructure.Settings;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using EventReporting.Shared.Middlerwares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 
 namespace EventReporting
 {
@@ -36,13 +30,7 @@ namespace EventReporting
             services.AddMvcCore()
                     .AddApiExplorer();
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader());
-            });
+            services.ConfigureCors();
 
             services.AddSwaggerDocumentation();
 
@@ -52,58 +40,15 @@ namespace EventReporting
                 options.EnableSensitiveDataLogging();
             }, ServiceLifetime.Transient);
 
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-
-                    ValidIssuer = Configuration["Jwt:Issuer"],
-                    ValidAudience = Configuration["Jwt:Issuer"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
-                };
-            });
-
+            services.ConfigureAuthetication(Configuration);
             services.AddIdentity<User, Role>()
                     .AddEntityFrameworkStores<AppDbContext>();
 
             services.Configure<RabbitMqSettings>(Configuration.GetSection(nameof(RabbitMqSettings)));
-
-            #region Services DI
-            services.AddScoped<ICityService, CityService>();
-            services.AddScoped<ISettlementService, SettlementService>();
-            services.AddScoped<IRabbitMQService, RabbitMQService>();
-            services.AddScoped<IQueueSenderService, QueueSenderService>();
-            services.AddHostedService<QueueInputSubscriber>();
-            services.AddScoped<IEventService, EventService>();
-            services.AddScoped<IUserService, UserService>();
-            #endregion
-
-            #region Repositories DI
-            services.AddScoped<ICityRepository, CityRepository>();
-            services.AddScoped<ISettlementRepository, SettlementRepository>();
-            services.AddScoped<IEventRepository, EventRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>(); 
-            #endregion
-
-            #region Autommaper
-            var mappingConfig = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new AutoMapperProfile());
-            });
-
-            IMapper mapper = mappingConfig.CreateMapper();
-            services.AddSingleton(mapper);
-            #endregion
-
+            services.AddUrlHelper();
+            services.RegisterServices();
+            services.RegisterRepositories();
+            services.AutoMapperConfig();
 
             var serviceProvider = services.BuildServiceProvider();
             var rabbitMQSettings = serviceProvider.GetRequiredService<IOptions<RabbitMqSettings>>().Value;
@@ -125,6 +70,7 @@ namespace EventReporting
                 app.UseHsts();
             }
 
+            app.UseExceptionMiddleware();
             app.UseHttpsRedirection();
             app.UseCors("CorsPolicy");
             app.UseRouting();

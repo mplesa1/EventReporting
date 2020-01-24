@@ -16,6 +16,6 @@ namespace EventReporting.Shared.Contracts.DataAccess
 
         Task<Event> FindByMd5Async(string md5);
 
-        void DeleteAsync(Event @event);
+        Task DeleteAsync(Event @event);
     }
 }
