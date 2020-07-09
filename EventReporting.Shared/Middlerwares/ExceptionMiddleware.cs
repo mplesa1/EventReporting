@@ -8,6 +8,7 @@ using Newtonsoft.Json.Serialization;
 using Npgsql;
 using System;
 using System.Net;
+using System.Security.Authentication;
 using System.Threading.Tasks;
 
 namespace EventReporting.Shared.Middlerwares
@@ -59,6 +60,10 @@ namespace EventReporting.Shared.Middlerwares
             catch (BusinessException ex)
             {
                 await SendRepsonse(ApiResponse.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message), httpContext);
+            }            
+            catch (AuthenticationException ex)
+            {
+                await SendRepsonse(ApiResponse.CreateErrorResponse(HttpStatusCode.Unauthorized, ex.Message), httpContext);
             }
             catch (Exception ex)
             {

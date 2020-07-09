@@ -27,7 +27,7 @@ namespace EventReporting.BusinessLayer.Services
         public QueueInputSubscriber(IServiceProvider serviceProvider, IOptions<RabbitMqSettings> options)
         {
             _rabbitMqSettings = options.Value;
-            ConnectionFactory connectionFactory = new ConnectionFactory();
+            ConnectionFactory connectionFactory = new ConnectionFactory { DispatchConsumersAsync = true };
             connectionFactory.HostName = _rabbitMqSettings.Host;
             connectionFactory.Port = _rabbitMqSettings.Port;
             connectionFactory.Password = _rabbitMqSettings.Password;
@@ -45,59 +45,18 @@ namespace EventReporting.BusinessLayer.Services
         
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            var outputQueueMessage = new OutputQueueMessage();
             if (!_rabbitMqSettings.StartInputListener || _connection == null)
             {
                 return Task.CompletedTask;
             }
-
             _model = _connection.CreateModel();
-            var consumer = new EventingBasicConsumer(_model);
-                _model.QueueDeclare(_rabbitMqSettings.InputQueueName, false, false, true, null);
-            consumer.Received += async (model, ea) =>
-            {
-                var body = ea.Body;
-                var message = Encoding.UTF8.GetString(body);
-
-                try
-                {
-                    CreateEventDto dto = JsonConvert.DeserializeObject<CreateEventDto>(message);
-                    outputQueueMessage.Md5 = dto.Md5;
-                    using (var scope = _serviceProvider.CreateScope())
-                    {
-                        var eventService = scope.ServiceProvider.GetRequiredService<IEventService>();
-                        await eventService.CreateAsync(dto);
-                    }
-                    outputQueueMessage.EventStatus = EventStatusConstants.SUCCESSFULLY_RECEIVED;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                    outputQueueMessage.EventStatus = EventStatusConstants.UNSUCCESSFULLY_RECEIVED;
-                }
-
-                try
-                {
-                    var sended = true;
-                    using (var scope = _serviceProvider.CreateScope())
-                    {
-                        var queueSenderService = scope.ServiceProvider.GetRequiredService<IQueueSenderService>();
-                        sended = queueSenderService.SendToQueueOutput(outputQueueMessage);
-                    }
-
-                    if (outputQueueMessage.EventStatus == EventStatusConstants.SUCCESSFULLY_RECEIVED)
-                    {
-                        using var scope = _serviceProvider.CreateScope();
-                        var eventService = scope.ServiceProvider.GetRequiredService<IEventService>();
-                        await eventService.UpdateSendedToOutputAsync(outputQueueMessage.Md5, sended);
-                    }
-                }
-                catch(Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-            };
-             
+            _model.QueueDeclare(queue: _rabbitMqSettings.InputQueueName,
+                     durable: true,
+                     exclusive: false,
+                     autoDelete: false,
+                     arguments: null);
+            var consumer = new AsyncEventingBasicConsumer(_model);
+            consumer.Received += Consumer_Received;
             _model.BasicConsume(queue: _rabbitMqSettings.InputQueueName,
                                  autoAck: true,
                                  consumer: consumer);
@@ -110,6 +69,52 @@ namespace EventReporting.BusinessLayer.Services
             _connection.Close();
 
             return Task.CompletedTask;
+        }
+
+        private async Task Consumer_Received(object sender, BasicDeliverEventArgs ea)
+        {
+            var body = ea.Body;
+            var message = Encoding.UTF8.GetString(body);
+            var outputQueueMessage = new OutputQueueMessage();
+            try
+            {
+                CreateEventDto dto = JsonConvert.DeserializeObject<CreateEventDto>(message);
+                outputQueueMessage.Md5 = dto.Md5;
+                using (var scope = _serviceProvider.CreateScope())
+                {
+                    var eventService = scope.ServiceProvider.GetRequiredService<IEventService>();
+                    await eventService.CreateAsync(dto);
+                }
+                outputQueueMessage.EventStatus = EventStatusConstants.SUCCESSFULLY_RECEIVED;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                outputQueueMessage.EventStatus = EventStatusConstants.UNSUCCESSFULLY_RECEIVED;
+            }
+
+            try
+            {
+                var sended = true;
+                using (var scope = _serviceProvider.CreateScope())
+                {
+                    var queueSenderService = scope.ServiceProvider.GetRequiredService<IQueueSenderService>();
+                    sended = queueSenderService.SendToQueueOutput(outputQueueMessage);
+                }
+
+                if (outputQueueMessage.EventStatus == EventStatusConstants.SUCCESSFULLY_RECEIVED)
+                {
+                    using (var scope = _serviceProvider.CreateScope())
+                    {
+                        var eventService = scope.ServiceProvider.GetRequiredService<IEventService>();
+                        await eventService.UpdateSendedToOutputAsync(outputQueueMessage.Md5, sended);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }

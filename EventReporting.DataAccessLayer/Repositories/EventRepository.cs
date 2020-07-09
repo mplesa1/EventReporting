@@ -2,6 +2,7 @@
 using EventReporting.Model;
 using EventReporting.Shared.Contracts.DataAccess;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -15,8 +16,15 @@ namespace EventReporting.DataAccessLayer.Repositories
 
         public async Task CreateAsync(Event @event)
         {
-            await _dbSet.AddAsync(@event);
-            await _dbContext.SaveChangesAsync();
+            try
+            {
+                await _dbSet.AddAsync(@event);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public async Task DeleteAsync(Event @event)

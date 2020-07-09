@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace EventReporting.Shared.DataTransferObjects.Event
 {
@@ -15,8 +16,10 @@ namespace EventReporting.Shared.DataTransferObjects.Event
         [Required]
         public int SettlementId { get; set; }
 
+        [JsonIgnore]
         public string Md5 { get; set; }
 
+        [JsonIgnore]
         public int UserId { get; set; }
     }
 }

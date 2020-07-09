@@ -24,8 +24,16 @@ namespace EventReporting.BusinessLayer.Services
             {
                 connection = GetConnection();
                 model = connection.CreateModel();
-                model.QueueDeclare(_rabbitMqSettings.InputQueueName, false, false, true, null);
-                model.QueueDeclare(_rabbitMqSettings.OutputQueueName, false, false, true, null);
+                //model.QueueDeclare(queue: _rabbitMqSettings.InputQueueName, 
+                //                 durable: true,
+                //                 exclusive: false,
+                //                 autoDelete: false,
+                //                 arguments: null);
+                model.QueueDeclare(queue: _rabbitMqSettings.OutputQueueName, 
+                                 durable: true,
+                                 exclusive: false,
+                                 autoDelete: false,
+                                 arguments: null);
                 model.Close();
                 connection.Close();
             }

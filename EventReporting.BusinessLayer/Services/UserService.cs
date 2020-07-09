@@ -129,26 +129,24 @@ namespace EventReporting.BusinessLayer.Services
             return userData;
         }
 
-
         private async Task<string> GenerateJwt(User user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
-{
+            {
                 new Claim(JwtConstants.ID_CLAIM_NAME, user.Id.ToString()),
                 new Claim(JwtConstants.PIN_CLAIM_NAME, user.PIN),
                 new Claim(JwtConstants.FIRST_NAME_CLAIM_NAME, user.FirstName),
                 new Claim(JwtConstants.LAST_NAME_CLAIM_NAME, user.LastName),
                 new Claim(JwtConstants.EMAIL_CLAIM_NAME, user.Email),
                 new Claim(JwtConstants.ROLE_CLAIM_NAME, user.UserRoles.FirstOrDefault().Role.Name)
-
             };
 
             var token = new JwtSecurityToken(
                 issuer: _config["Jwt:Issuer"],
-                audience: _config["Jwt:Issuer"],
+                audience: _config["Jwt:Audience"],
                 claims,
                 expires: DateTime.Now.AddMinutes(600),
                 signingCredentials: credentials

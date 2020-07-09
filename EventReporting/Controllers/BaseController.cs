@@ -11,7 +11,6 @@ namespace EventReporting.Api.Controllers
     [Route("api/[controller]")]
     public abstract class BaseController : ControllerBase
     {
-
         protected IActionResult ApiResponseOk(object response)
         {
             return Ok(ApiResponse.CreateResponse(HttpStatusCode.OK, response));
